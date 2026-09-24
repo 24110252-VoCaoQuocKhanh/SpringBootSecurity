@@ -35,14 +35,7 @@ class SecurityEndpointsTest {
     }
 
     @Test
-    void testHelloEndpointUnauthenticated() throws Exception {
-        mockMvc.perform(get("/hello"))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @WithMockUser(username = "anyuser")
-    void testHelloEndpointAuthenticated() throws Exception {
+    void testHelloEndpointIsPublic() throws Exception {
         mockMvc.perform(get("/hello"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("hello is Guest"));

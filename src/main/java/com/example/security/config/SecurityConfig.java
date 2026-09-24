@@ -39,14 +39,27 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationProvider authenticationProvider) throws Exception {
-        return http
-                .csrf(csrf -> csrf.disable())
+        return http.csrf(csrf -> csrf.disable())
                 .authenticationProvider(authenticationProvider)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/new", "/error").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/user/new").permitAll()
+                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/hello").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("/customer/**").authenticated()
                 )
-                .formLogin(Customizer.withDefaults())
+                .formLogin(form -> form
+                        .defaultSuccessUrl("/hello", true)
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll()
+                )
                 .httpBasic(Customizer.withDefaults())
                 .build();
     }
